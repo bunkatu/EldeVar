@@ -2,12 +2,17 @@ package me.mehmetkaya.eldevar;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,8 +46,9 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import io.saeid.fabloading.LoadingView;
+import android.support.v4.util.Pair;
 
-public class MainActivity extends AppCompatActivity implements TokenCompleteTextView.TokenListener {
+public class MainActivity extends Activity implements TokenCompleteTextView.TokenListener {
     CompletionView cmpview;
     ArrayList<Malzeme> malzemeler=new ArrayList<>();
     ArrayList<String> eldekiler=new ArrayList<>();
@@ -56,14 +62,31 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
     LinearLayout horizontalContainer;
     int ilkEfekt;
     int efektFadeOut;
+
+    //recyler icin
+    private RecyclerView mRecyclerView;
+    private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
+
+    private YemekListAdapter yemekListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //recyler atamaları burada
+        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+
+        mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
+
+
+        InitialTask initialTask = new InitialTask();
+        initialTask.execute();
+
+
+
         ilkEfekt = 0;
         efektFadeOut = 0;
-        getSupportActionBar().hide();
         scrollView=(HorizontalScrollView)findViewById(R.id.horizontalScrollView);
         horizontalLayout=(LinearLayout)findViewById(R.id.horzontal_layout);
         horizontalContainer = (LinearLayout)findViewById(R.id.horizontalContainer);
@@ -94,6 +117,26 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
 
 
     }
+    YemekListAdapter.OnItemClickListener onItemClickListener = new YemekListAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view, int position) {
+            Intent intent = new Intent(MainActivity.this, TarifActivity.class);
+            intent.putExtra("TARIF_ID", yemekListAdapter.getTarifID(position));
+            //startActivity(intent);
+            ImageView tarifImage = (ImageView)view.findViewById(R.id.yemekCardResim);
+            LinearLayout yemekNameHolder = (LinearLayout)view.findViewById(R.id.yemekNameHolder);
+
+            android.support.v4.util.Pair<View, String> imagePair = android.support.v4.util.Pair.create((View) tarifImage, "tImage");
+            android.support.v4.util.Pair<View, String> holderPair = android.support.v4.util.Pair.create((View) yemekNameHolder, "tNameHolder");
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                    imagePair, holderPair);
+
+            ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
+
+        }
+    };
+
     public class MalzemeTask extends AsyncTask<Void, Void, String>{
 
         @Override
@@ -212,7 +255,11 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
                 Log.d("NOTNULL","Not_null");
                 Log.i("asd", result.toString());
                 try {
+
                     if(result.getString("durum").equals("tamam")){
+
+                        yemekListAdapter = new YemekListAdapter(getApplicationContext(), result);
+                        mRecyclerView.setAdapter(yemekListAdapter);
 
                         JSONArray tarifler = result.getJSONArray("tarifler");
 
@@ -274,6 +321,46 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
                             ilkEfekt = 1;
                             Log.d("ANIMATION","Actim");
                         }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    public class InitialTask extends AsyncTask<Void, Void, JSONObject>{
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+
+            Webb webb = Webb.create();
+
+            Response<JSONObject> response = webb.post("http://mehmetkaya.me/eldevar/api/v1/tarifBul")
+                    .ensureSuccess()
+                    .asJsonObject();
+
+            return response.getBody();
+
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result){
+            if(result!=null){
+                Log.d("NOTNULL","Not_null");
+                Log.i("asd", result.toString());
+                try {
+
+                    if(result.getString("durum").equals("tamam")){
+
+                        yemekListAdapter = new YemekListAdapter(getApplicationContext(), result);
+                        yemekListAdapter.setOnItemClickListener(onItemClickListener);
+                        mRecyclerView.setAdapter(yemekListAdapter);
+
+                        JSONArray tarifler = result.getJSONArray("tarifler");
+
 
                     }
                 } catch (JSONException e) {
