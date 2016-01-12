@@ -44,8 +44,8 @@ import io.saeid.fabloading.LoadingView;
 
 public class MainActivity extends AppCompatActivity implements TokenCompleteTextView.TokenListener {
     CompletionView cmpview;
-    ArrayList<Malzeme> malzemeler=new ArrayList<Malzeme>();
-    ArrayList<String> eldekiler=new ArrayList<String>();
+    ArrayList<Malzeme> malzemeler=new ArrayList<>();
+    ArrayList<String> eldekiler=new ArrayList<>();
     ArrayAdapter<Malzeme> malzemeArrayAdapter;
     LinearLayout horizontalLayout;
     HorizontalScrollView scrollView;
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
 
     LinearLayout horizontalContainer;
     int ilkEfekt;
-    int asdq;
     int efektFadeOut;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
