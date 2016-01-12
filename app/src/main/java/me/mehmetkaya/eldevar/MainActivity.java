@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements TokenCompleteText
 
     LinearLayout horizontalContainer;
     int ilkEfekt;
-    int asd;
+    int asdq;
     int efektFadeOut;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
