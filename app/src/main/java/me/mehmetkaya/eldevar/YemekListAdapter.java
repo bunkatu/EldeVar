@@ -51,7 +51,7 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
         final ViewHolder customHolder = holder;
         holder.yemekName.setText(tarif.getTarifName());
         //Picasso.with(mContext).load(tarif.getTarifImage()).into(holder.yemekResim);
-        Bitmap photo;
+        //Bitmap photo;
         UrlImageViewHelper.loadUrlDrawable(mContext, tarif.getTarifImage(), new UrlImageViewCallback() {
             @Override
             public void onLoaded(ImageView ımageView, Bitmap bitmap, String s, boolean b) {
