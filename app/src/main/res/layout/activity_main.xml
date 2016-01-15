@@ -16,55 +16,11 @@
         android:visibility="visible"
         android:id="@+id/mainContent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/upperRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="40"
-            android:id="@+id/horizontalContainer"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Size Uygun Tarifler"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:singleLine="true"
-                android:shadowColor="#9a9a9a"
-                android:password="false"
-                android:phoneNumber="false"
-                android:paddingLeft="2dp"
-                android:paddingBottom="5dp"
-                android:textColor="#000000" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/horizontalScrollView"
-                android:layout_above="@+id/search_view"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentEnd="false"
-                android:background="#4d9c9c9c"
-                android:visibility="visible">
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/horzontal_layout">
-
-                </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dip"
-            android:background="#000000"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"/>
+            android:layout_height="150dp"
+            android:visibility="gone"/>
 
         <me.mehmetkaya.eldevar.CompletionView
             android:id="@+id/search_view"

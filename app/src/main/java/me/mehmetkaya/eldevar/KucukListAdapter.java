@@ -2,46 +2,46 @@ package me.mehmetkaya.eldevar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewCallback;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 /**
- * Created by mehmetkaya on 12.01.16.
+ * Created by kullanici on 13.01.2016.
  */
-public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.ViewHolder> {
+public class KucukListAdapter extends RecyclerView.Adapter<KucukListAdapter.ViewHolder> {
 
     Context mContext;
     JSONObject tarifler;
     OnItemClickListener mItemClickListener;
+    public KucukListAdapter(Context context,JSONObject jsonObject){
+        this.mContext=context;
+        this.tarifler=jsonObject;
+    }
 
-    public YemekListAdapter(Context context, JSONObject tarifler){
-        mContext = context;
-        this.tarifler = tarifler;
+    public void changeTarifList(JSONObject newlist){
+
+        tarifler=newlist;
+        notifyDataSetChanged();
+
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.small_card_view,parent,false);
         return new ViewHolder(view);
     }
 
@@ -64,37 +64,12 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
                 });
             }
         });
-        /*Picasso.with(mContext).load(tarif.getTarifImage()).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                customHolder.yemekResim.setImageBitmap(bitmap);
-                Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
-                    public void onGenerated(Palette palette) {
-                        int bgColor = palette.getMutedColor(mContext.getResources().getColor(android.R.color.black));
-                        customHolder.yemekNameHolder.setBackgroundColor(bgColor);
-                    }
-                });
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        });*/
-
-
     }
 
     @Override
     public int getItemCount() {
         return new TarifData(tarifler).getCount();
     }
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public LinearLayout mainHolder;
@@ -105,10 +80,10 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
         public ViewHolder(View itemView){
 
             super(itemView);
-            mainHolder = (LinearLayout)itemView.findViewById(R.id.mainHolder);
-            yemekName = (TextView)itemView.findViewById(R.id.yemekName);
-            yemekNameHolder = (LinearLayout)itemView.findViewById(R.id.yemekNameHolder);
-            yemekResim = (ImageView)itemView.findViewById(R.id.yemekCardResim);
+            mainHolder = (LinearLayout)itemView.findViewById(R.id.kucuk_main_holder);
+            yemekName = (TextView)itemView.findViewById(R.id.kucuk_yemek_name);
+            yemekNameHolder = (LinearLayout)itemView.findViewById(R.id.kucuk_yemek_name_holder);
+            yemekResim = (ImageView)itemView.findViewById(R.id.kucuk_yemek_kart_resim);
             mainHolder.setOnClickListener(this);
 
         }
@@ -125,9 +100,8 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
 
 
 
+
     }
-
-
     public interface OnItemClickListener{
         void onItemClick(View view, int position);
     }
@@ -135,7 +109,6 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener){
         this.mItemClickListener = mItemClickListener;
     }
-
     public String getTarifID(int position){
 
         try {
@@ -149,7 +122,5 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
 
         return null;
     }
-
-
 
 }

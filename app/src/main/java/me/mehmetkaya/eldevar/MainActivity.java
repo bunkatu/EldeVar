@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -61,13 +62,17 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
 
     LinearLayout horizontalContainer;
     int ilkEfekt;
+    int ilkIstek;
     int efektFadeOut;
 
     //recyler icin
     private RecyclerView mRecyclerView;
+    private RecyclerView upperRecyclerView;
+    private StaggeredGridLayoutManager upperLayoutManager;
     private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
 
     private YemekListAdapter yemekListAdapter;
+    private KucukListAdapter kucukListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -75,9 +80,12 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         setContentView(R.layout.activity_main);
         //recyler atamaları burada
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        upperRecyclerView = (RecyclerView) findViewById(R.id.upperRecyclerView);
 
         mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        upperLayoutManager =new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
+        upperRecyclerView.setLayoutManager(upperLayoutManager);
 
 
         InitialTask initialTask = new InitialTask();
@@ -86,10 +94,8 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
 
 
         ilkEfekt = 0;
+        ilkIstek=0;
         efektFadeOut = 0;
-        scrollView=(HorizontalScrollView)findViewById(R.id.horizontalScrollView);
-        horizontalLayout=(LinearLayout)findViewById(R.id.horzontal_layout);
-        horizontalContainer = (LinearLayout)findViewById(R.id.horizontalContainer);
 
         mainContent = (LinearLayout)findViewById(R.id.mainContent);
         loadingContent = (RelativeLayout) findViewById(R.id.loadingContent);
@@ -125,6 +131,26 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
             //startActivity(intent);
             ImageView tarifImage = (ImageView)view.findViewById(R.id.yemekCardResim);
             LinearLayout yemekNameHolder = (LinearLayout)view.findViewById(R.id.yemekNameHolder);
+
+            android.support.v4.util.Pair<View, String> imagePair = android.support.v4.util.Pair.create((View) tarifImage, "tImage");
+            android.support.v4.util.Pair<View, String> holderPair = android.support.v4.util.Pair.create((View) yemekNameHolder, "tNameHolder");
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                    imagePair, holderPair);
+
+            ActivityCompat.startActivity(MainActivity.this, intent, options.toBundle());
+
+        }
+    };
+
+    KucukListAdapter.OnItemClickListener upperOnItemClickListener = new KucukListAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view, int position) {
+            Intent intent = new Intent(MainActivity.this, TarifActivity.class);
+            intent.putExtra("TARIF_ID", kucukListAdapter.getTarifID(position));
+            //startActivity(intent);
+            ImageView tarifImage = (ImageView)view.findViewById(R.id.kucuk_yemek_kart_resim);
+            LinearLayout yemekNameHolder = (LinearLayout)view.findViewById(R.id.kucuk_yemek_name_holder);
 
             android.support.v4.util.Pair<View, String> imagePair = android.support.v4.util.Pair.create((View) tarifImage, "tImage");
             android.support.v4.util.Pair<View, String> holderPair = android.support.v4.util.Pair.create((View) yemekNameHolder, "tNameHolder");
@@ -252,17 +278,37 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         @Override
         protected void onPostExecute(JSONObject result){
             if(result!=null){
-                Log.d("NOTNULL","Not_null");
+                Log.d("NOTNULL","Not_null1");
                 Log.i("asd", result.toString());
                 try {
 
                     if(result.getString("durum").equals("tamam")){
-
-                        yemekListAdapter = new YemekListAdapter(getApplicationContext(), result);
-                        mRecyclerView.setAdapter(yemekListAdapter);
-
                         JSONArray tarifler = result.getJSONArray("tarifler");
+                        if (ilkIstek==0){
+                            kucukListAdapter = new KucukListAdapter(getApplicationContext(),result);
+                            kucukListAdapter.setOnItemClickListener(upperOnItemClickListener);
+                            upperRecyclerView.setAdapter(kucukListAdapter);
+                            upperRecyclerView.setVisibility(View.VISIBLE);
+                            ilkIstek=1;
+                        }
+                        else{
+                            kucukListAdapter.changeTarifList(result);
+                            if(tarifler.length()==0){
+                                upperRecyclerView.setVisibility(View.GONE);
+                            }
+                            else{
+                                upperRecyclerView.setVisibility(View.VISIBLE);
+                            }
+                        }
 
+                       // yemekListAdapter = new YemekListAdapter(getApplicationContext(), result);
+                       // kucukListAdapter = new KucukListAdapter(getApplicationContext(),result);
+                       // kucukListAdapter.setOnItemClickListener();
+                       // upperRecyclerView.setAdapter(kucukListAdapter);
+
+
+
+                        /*
                         horizontalLayout.removeAllViewsInLayout();
 
                         for(int i = 0; i < tarifler.length(); i++){
@@ -320,7 +366,7 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
                             });
                             ilkEfekt = 1;
                             Log.d("ANIMATION","Actim");
-                        }
+                        }*/
 
                     }
                 } catch (JSONException e) {
@@ -349,7 +395,7 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         @Override
         protected void onPostExecute(JSONObject result){
             if(result!=null){
-                Log.d("NOTNULL","Not_null");
+                Log.d("NOTNULL","Not_null2");
                 Log.i("asd", result.toString());
                 try {
 
@@ -380,6 +426,7 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         tarif.execute(jsonArray.toString());
 
     }
+
 
     @Override
     public void onTokenRemoved(Object o) {

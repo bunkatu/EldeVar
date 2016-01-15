@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="android:displayOptions">disableHome</item>
+        <item name="android:windowSoftInputMode">stateHidden</item>
     </style>
 
 </resources>
