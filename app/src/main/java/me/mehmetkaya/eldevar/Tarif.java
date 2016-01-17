@@ -1,27 +1,38 @@
 package me.mehmetkaya.eldevar;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * Created by mehmetkaya on 12.01.16.
  */
-public class Tarif {
+public class Tarif implements Serializable {
     private String tarifId;
     private String tarifName;
     private String tarifContent;
-    private String[] tarifMalzemeler;
+    private ArrayList<String> tarifMalzemeler=new ArrayList<>();
     private String tarifImage;
 
     public Tarif(JSONObject jsonString){
         try {
+            Log.d("TARIF_MALZEMELER", jsonString.toString());
             this.tarifId = jsonString.getString("id");
             this.tarifName = jsonString.getString("adi");
             this.tarifContent = jsonString.getString("tarif");
             this.tarifImage = jsonString.getString("yol");
+            JSONArray malzemelerJson = jsonString.getJSONArray("malzemeler");
+            for(int i=0; i<malzemelerJson.length();i++){
+                String malzeme=malzemelerJson.getJSONObject(i).getString("adi");
+                Log.d("MALZEME",malzeme);
+                tarifMalzemeler.add(malzeme);
+            }
 
 
         } catch (JSONException e) {
@@ -42,7 +53,7 @@ public class Tarif {
         return tarifContent;
     }
 
-    public String[] getTarifMalzemeler() {
+    public ArrayList<String> getTarifMalzemeler() {
         return tarifMalzemeler;
     }
 

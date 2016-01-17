@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
     CompletionView cmpview;
     ArrayList<Malzeme> malzemeler=new ArrayList<>();
     ArrayList<String> eldekiler=new ArrayList<>();
+    ArrayList<Tarif> tarifler=new ArrayList<>();
     ArrayAdapter<Malzeme> malzemeArrayAdapter;
     LinearLayout horizontalLayout;
     HorizontalScrollView scrollView;
@@ -127,7 +128,8 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         @Override
         public void onItemClick(View view, int position) {
             Intent intent = new Intent(MainActivity.this, TarifActivity.class);
-            intent.putExtra("TARIF_ID", yemekListAdapter.getTarifID(position));
+            Tarif tarif=new Tarif(yemekListAdapter.getTarif(position));
+            intent.putExtra("TARIF", tarif);
             //startActivity(intent);
             ImageView tarifImage = (ImageView)view.findViewById(R.id.yemekCardResim);
             LinearLayout yemekNameHolder = (LinearLayout)view.findViewById(R.id.yemekNameHolder);
@@ -147,6 +149,8 @@ public class MainActivity extends Activity implements TokenCompleteTextView.Toke
         @Override
         public void onItemClick(View view, int position) {
             Intent intent = new Intent(MainActivity.this, TarifActivity.class);
+            Tarif tarif = new Tarif(kucukListAdapter.getTarif(position));
+            intent.putExtra("TARIF",tarif);
             intent.putExtra("TARIF_ID", kucukListAdapter.getTarifID(position));
             //startActivity(intent);
             ImageView tarifImage = (ImageView)view.findViewById(R.id.kucuk_yemek_kart_resim);

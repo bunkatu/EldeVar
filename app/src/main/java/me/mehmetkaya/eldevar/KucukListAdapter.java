@@ -122,5 +122,14 @@ public class KucukListAdapter extends RecyclerView.Adapter<KucukListAdapter.View
 
         return null;
     }
+    public JSONObject getTarif(int position){
+        try {
+            JSONArray tarifList = tarifler.getJSONArray("tarifler");
+            return tarifList.getJSONObject(position);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

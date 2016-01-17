@@ -150,6 +150,16 @@ public class YemekListAdapter extends RecyclerView.Adapter<YemekListAdapter.View
         return null;
     }
 
+    public JSONObject getTarif(int position){
+        try {
+            JSONArray tarifList = tarifler.getJSONArray("tarifler");
+            return tarifList.getJSONObject(position);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 }

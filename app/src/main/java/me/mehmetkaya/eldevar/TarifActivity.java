@@ -24,6 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class TarifActivity extends Activity {
     ImageView tarif_resim;
     TextView tarif_malzeme;
@@ -38,6 +40,7 @@ public class TarifActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tarif);
         Intent intent=getIntent();
+        Tarif tarif=(Tarif)intent.getExtras().getSerializable("TARIF");
         String id=intent.getStringExtra("TARIF_ID");
         tarif_resim=(ImageView)findViewById(R.id.detay_card_resim);
         tarif_malzeme=(TextView)findViewById(R.id.tarif_malzemeler);
@@ -47,10 +50,46 @@ public class TarifActivity extends Activity {
         tarif_card=(CardView)findViewById(R.id.tarif_card);
         malzemeler_card=(CardView)findViewById(R.id.malzemeler_card);
 
-        TarifTask tarifTask=new TarifTask();
-        tarifTask.execute(id);
+
+
+        //------------------------------------------------------------------------------------
+
+        UrlImageViewHelper.loadUrlDrawable(getApplicationContext(), tarif.getTarifImage(), new UrlImageViewCallback() {
+            @Override
+            public void onLoaded(ImageView ımageView, Bitmap bitmap, String s, boolean b) {
+                tarif_resim.setImageBitmap(bitmap);
+                Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                    public void onGenerated(Palette palette) {
+                        int bgColor = palette.getMutedColor(getApplicationContext().getResources().getColor(android.R.color.black));
+                        int color1=palette.getDarkVibrantColor(getApplicationContext().getResources().getColor(android.R.color.black));
+                        int color2=palette.getLightVibrantColor(getApplicationContext().getResources().getColor(android.R.color.black));
+                        yemek_name_holder.setBackgroundColor(bgColor);
+                        tarif_card.setCardBackgroundColor(color1);
+                        malzemeler_card.setCardBackgroundColor(color2);
+                    }
+                });
+            }
+        });
+
+        String malzemelerS="Malzemeler:\n";
+        ArrayList<String> malzemeler=tarif.getTarifMalzemeler();
+        for(int i=0;i<malzemeler.size();i++){
+            malzemelerS+="-->"+malzemeler.get(i)+"\n";
+        }
+        tarif_malzeme.setText(malzemelerS);
+        tarif_detay.setText(tarif.getTarifContent());
+        tarif_isim.setText(tarif.getTarifName());
+
+
+
+
+        //------------------------------------------------------------------------------------
+
+       /* TarifTask tarifTask=new TarifTask();
+        tarifTask.execute(id);*/
 
     }
+    /*
     public class TarifTask extends AsyncTask<String, Void, JSONObject> {
 
         @Override
@@ -110,5 +149,5 @@ public class TarifActivity extends Activity {
 
             }
         }
-    }
+    }*/
 }
